@@ -1,18 +1,19 @@
-import pandas as pd
+# import pandas as pd
+# import os
 import datetime
-import os
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, current_user
 from flask_login import logout_user, login_required
-from forms import RegistrationForm, LoginForm, PostForm, PPForm
-
+from forms import RegistrationForm, LoginForm
+# for advanced functionalities add following:
+# from forms import  receipt_upload, keyword, food_upload
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "enter-a-hard-to-guess-string"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  # To change
+db = SQLAlchemy(app)  # To change
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -30,8 +31,7 @@ class User(db.Model, UserMixin):
     uname = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    profilepic = db.Column(db.String(100), default=None)
-    posts = db.relationship("Posts", backref="op", lazy=True)
+    receipts = db.relationship("Receipts", backref="op", lazy=True)
 
     def __repr__(self):
         return f"User(id: '{self.id}', fname: '{self.fname}', " +\
@@ -39,7 +39,7 @@ class User(db.Model, UserMixin):
                f" password: '{self.password}', email: '{self.email}')"
 
 
-class Posts(db.Model, UserMixin):
+class Receipts(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(140), nullable=False)
     length = db.Column(db.String(10), nullable=False)
@@ -49,7 +49,7 @@ class Posts(db.Model, UserMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
-        return f"Product(id: '{self.id}', conrent: '{self.content}', " +\
+        return f"Receipts(id: '{self.id}', conrent: '{self.content}', " +\
                f" length: '{self.length}', " +\
                f" date_created: '{self.date_created}', " +\
                f" imgn: '{self.imgn}', op: '{self.user_id}')"
@@ -57,11 +57,36 @@ class Posts(db.Model, UserMixin):
 
 @app.route("/")
 def index():
-    if current_user.is_authenticated:
-        posts = get_posts()
-        return render_template("index.html", posts_df=posts, User=User)
-    else:
-        return redirect(url_for("login"))
+    # The smart shopping list
+    return False
+
+
+"""
+Advanced functionalities
+
+@app.route("/Analytics")
+def analytics():
+    # The fancy expense report
+    return False
+
+
+@app.route("/scan-receipt")
+def receipt():
+    # Scan receipt and upload its contents
+    form = RegistrationForm()
+
+
+@app.route("/suggested-recipe")
+def sugrec():
+    # Recipe from picture
+    form = RegistrationForm()
+
+
+@app.route("/find-recipe")
+def findrec():
+    #  Recipe from keyword
+    form = RegistrationForm()
+"""
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -89,7 +114,8 @@ def login():
             return redirect(url_for("index"))
         else:
             if User.query.filter_by(email=form.email.data).count() > 0:
-                flash("Login unsuccessful, please check your credentials and try again")
+                flash("Login unsuccessful, please check your credentials"
+                      "and try again")
             else:
                 return redirect(url_for("register"))
     return render_template("login.html", form=form, User=User)
@@ -100,6 +126,9 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+
+# functions
 
 
 def register_user(form_data):
@@ -127,8 +156,8 @@ def register_user(form_data):
                 uname=form_data.uname.data,
                 email=form_data.email.data,
                 password=hashed_password)
-    db.session.add(user)
-    db.session.commit()
+    db.session.add(user)  # local sql databasr
+    db.session.commit()  # local sql databasr
     return True
 
 

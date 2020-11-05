@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<form  method="post"  class="formscss">
+  {{ form.hidden_tag() }}
+
+  {{ form.fname.label }} {{ form.fname() }}
+  <br>  <br>
+  {{ form.lname.label }} {{ form.lname() }}
+  <br>  <br>
+  {{ form.uname.label }} {{ form.uname() }}
+  <br>  <br>
+  {{ form.email.label }} {{ form.email() }}
+  <br>  <br>
+  {{ form.password.label }} {{ form.password() }}
+  <br>  <br>
+  {{ form.submit_button() }}
+
+</form>
+
+<div class="container" style="min-height:100% width:80%">
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+</div>
+
+<h5> Are you already registered? <a href="{{ url_for("login") }}">Sign in here</a></h5>
+</html>
