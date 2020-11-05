@@ -21,10 +21,21 @@ class LoginForm(FlaskForm):
     submit_button = SubmitField("Submit")
 
 
+class receipt_upload(FlaskForm):
+    grain = StringField("Grain-based products")
+    milk = StringField("Milk-based products")
+    proteins = StringField("Proteins")
+    vegetables = StringField("Vegetables")
+    fruits = PasswordField("Fruits")
+    drinks = StringField("Drinks")
+    misc = StringField("Miscellaneous")
+    submit_button = SubmitField("Submit")
+
+
 """
 Advanced functionalities
 
-class receipt_upload(Form):
+class receipt_upload_adv(Form):
     receipt_picture = FileField("Upload your receipt",
                                             validators=[DataRequired()])
     submit_button = SubmitField("Submit")

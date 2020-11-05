@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, current_user
 from flask_login import logout_user, login_required
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, receipt_upload
 # for advanced functionalities add following:
 # from forms import  receipt_upload, keyword, food_upload
 app = Flask(__name__)
@@ -41,24 +41,42 @@ class User(db.Model, UserMixin):
 
 class Receipts(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(140), nullable=False)
-    length = db.Column(db.String(10), nullable=False)
+    grain = db.Column(db.Integer, default=0)
+    milk = db.Column(db.Integer, default=0)
+    proteins = db.Column(db.Integer, default=0)
+    greens = db.Column(db.Integer, default=0)
+    fruits = db.Column(db.Integer, default=0)
+    drinks = db.Column(db.Integer, default=0)
+    misc = db.Column(db.Integer, default=0)
     date_created = db.Column(db.DateTime, nullable=False,
                              default=datetime.datetime.now)
-    imgn = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
-        return f"Receipts(id: '{self.id}', conrent: '{self.content}', " +\
-               f" length: '{self.length}', " +\
+        return f"Receipts(id: '{self.id}', grain: '{self.grain}', " +\
+               f" milk: '{self.milk}', " +\
+               f" proteins: '{self.proteins}', " +\
+               f" greens: '{self.greens}', " +\
+               f" fruits: '{self.fruits}', " +\
+               f" drinks: '{self.drinks}', " +\
+               f" misc: '{self.misc}', " +\
                f" date_created: '{self.date_created}', " +\
-               f" imgn: '{self.imgn}', op: '{self.user_id}')"
+               f" op: '{self.user_id}')"
 
 
 @app.route("/")
 def index():
     # The smart shopping list
+    # Placeholder
     return False
+
+
+@app.route("/upload-receipt")
+def manual_receipt():
+    form = receipt_upload()
+    if form.validate_on_submit():
+        return True  # Placeholder
+    return render_template("receipt.html", form=form)
 
 
 """
